@@ -37,15 +37,17 @@ app.get("/stream", (req, res) => {
   });
 
   const ffmpeg = spawn("ffmpeg", [
-    "-i", url,
-    "-vcodec", "libx264",
-    "-preset", "veryfast",
-    "-crf", "28",
-    "-acodec", "aac",
-    "-f", "mp4",
-    "-movflags", "frag_keyframe+empty_moov",
-    "pipe:1"
-  ]);
+  "-headers", "User-Agent: Mozilla/5.0\r\n",
+  "-headers", "Referer: https://google.com\r\n",
+  "-i", url,
+  "-vcodec", "libx264",
+  "-preset", "veryfast",
+  "-crf", "28",
+  "-acodec", "aac",
+  "-f", "mp4",
+  "-movflags", "frag_keyframe+empty_moov",
+  "pipe:1"
+]);
 
   ffmpeg.stdout.pipe(res);
 
