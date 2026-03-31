@@ -1,0 +1,316 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+#app { padding: 1.5rem 0; max-width: 680px; }
+h2 { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+.subtitle { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 1.5rem; }
+.tabs { display: flex; gap: 4px; margin-bottom: 1.25rem; background: var(--color-background-secondary); padding: 4px; border-radius: var(--border-radius-md); width: fit-content; }
+.tab { padding: 6px 16px; font-size: 13px; border-radius: 6px; cursor: pointer; border: none; background: transparent; color: var(--color-text-secondary); font-family: var(--font-sans); transition: all 0.15s; }
+.tab.active { background: var(--color-background-primary); color: var(--color-text-primary); font-weight: 500; border: 0.5px solid var(--color-border-tertiary); }
+.dropzone { border: 1.5px dashed var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 2.5rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--color-background-secondary); }
+.dropzone:hover, .dropzone.drag { border-color: var(--color-border-primary); background: var(--color-background-tertiary); }
+.drop-icon { font-size: 32px; margin-bottom: 10px; }
+.drop-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.drop-sub { font-size: 13px; color: var(--color-text-secondary); }
+input[type="file"] { display: none; }
+.url-row { display: flex; gap: 8px; }
+.url-row input[type="text"] { flex: 1; }
+.url-row button { white-space: nowrap; padding: 0 16px; }
+.file-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px 16px; display: flex; align-items: center; gap: 12px; margin-top: 1rem; }
+.file-icon { width: 36px; height: 36px; background: var(--color-background-info); border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--color-text-info); flex-shrink: 0; }
+.file-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.file-size { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.file-remove { margin-left: auto; background: none; border: none; cursor: pointer; color: var(--color-text-tertiary); font-size: 18px; line-height: 1; padding: 4px; }
+.file-remove:hover { color: var(--color-text-danger); }
+.options { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 14px 16px; margin-top: 1rem; }
+.options-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.opt-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.opt-group { display: flex; flex-direction: column; gap: 4px; min-width: 140px; }
+.opt-label { font-size: 12px; color: var(--color-text-secondary); }
+select { font-size: 13px; padding: 5px 8px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); }
+.convert-btn { margin-top: 1.25rem; width: 100%; padding: 11px; font-size: 14px; font-weight: 500; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); cursor: pointer; font-family: var(--font-sans); transition: all 0.15s; }
+.convert-btn:hover:not(:disabled) { background: var(--color-background-secondary); }
+.convert-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.convert-btn.primary { background: var(--color-text-primary); color: var(--color-background-primary); border-color: var(--color-text-primary); }
+.convert-btn.primary:hover:not(:disabled) { opacity: 0.85; }
+.progress-area { margin-top: 1.25rem; }
+.progress-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.progress-bar-bg { background: var(--color-background-secondary); border-radius: 99px; height: 6px; overflow: hidden; }
+.progress-bar { height: 100%; background: var(--color-text-primary); border-radius: 99px; transition: width 0.3s ease; }
+.log-box { margin-top: 10px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; font-family: var(--font-mono); font-size: 11px; color: var(--color-text-secondary); max-height: 80px; overflow-y: auto; }
+.result-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px; margin-top: 1rem; }
+.result-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 12px; }
+.result-meta { display: flex; gap: 16px; margin-bottom: 14px; }
+.meta-item { font-size: 13px; }
+.meta-key { color: var(--color-text-secondary); }
+.meta-val { color: var(--color-text-primary); font-weight: 500; }
+.dl-btn { display: block; width: 100%; text-align: center; padding: 10px; background: var(--color-text-primary); color: var(--color-background-primary); border-radius: var(--border-radius-md); font-size: 14px; font-weight: 500; text-decoration: none; transition: opacity 0.15s; }
+.dl-btn:hover { opacity: 0.85; }
+.error-box { background: var(--color-background-danger); border: 0.5px solid var(--color-border-danger); border-radius: var(--border-radius-md); padding: 12px 14px; margin-top: 1rem; font-size: 13px; color: var(--color-text-danger); }
+.status-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; padding: 3px 10px; border-radius: 99px; }
+.chip-loading { background: var(--color-background-warning); color: var(--color-text-warning); }
+.chip-ready { background: var(--color-background-success); color: var(--color-text-success); }
+.chip-error { background: var(--color-background-danger); color: var(--color-text-danger); }
+.spinner { width: 10px; height: 10px; border: 1.5px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+</style>
+
+<div id="app">
+  <div class="top-bar">
+    <h2>MKV to MP4 Converter</h2>
+    <span id="ffmpeg-status" class="status-chip chip-loading"><span class="spinner"></span> Loading FFmpeg</span>
+  </div>
+  <p class="subtitle">Runs entirely in your browser — files never leave your device</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('file')">Upload file</button>
+    <button class="tab" onclick="switchTab('url')">From URL</button>
+  </div>
+
+  <div id="tab-file">
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('fileinput').click()">
+      <div class="drop-icon">&#128190;</div>
+      <div class="drop-title">Drop your MKV file here</div>
+      <div class="drop-sub">or click to browse</div>
+    </div>
+    <input type="file" id="fileinput" accept=".mkv,video/x-matroska">
+  </div>
+
+  <div id="tab-url" style="display:none;">
+    <div class="url-row">
+      <input type="text" id="url-input" placeholder="https://example.com/video.mkv" />
+      <button class="convert-btn" style="width:auto;margin:0;" onclick="fetchFromUrl()">Fetch</button>
+    </div>
+    <p style="font-size:12px;color:var(--color-text-secondary);margin-top:6px;">Note: the server must allow cross-origin requests (CORS). Direct links work best.</p>
+  </div>
+
+  <div id="file-card-area"></div>
+
+  <div class="options" id="options-area" style="display:none;">
+    <div class="options-title">Output settings</div>
+    <div class="opt-row">
+      <div class="opt-group">
+        <span class="opt-label">Video codec</span>
+        <select id="vcodec">
+          <option value="copy">Copy (fast, no re-encode)</option>
+          <option value="libx264">H.264 (re-encode)</option>
+          <option value="libx265">H.265 (smaller, slower)</option>
+        </select>
+      </div>
+      <div class="opt-group">
+        <span class="opt-label">Audio codec</span>
+        <select id="acodec">
+          <option value="copy">Copy (fast, no re-encode)</option>
+          <option value="aac">AAC</option>
+          <option value="mp3">MP3</option>
+        </select>
+      </div>
+      <div class="opt-group">
+        <span class="opt-label">Quality (CRF, if re-encoding)</span>
+        <select id="crf">
+          <option value="18">18 — visually lossless</option>
+          <option value="23" selected>23 — balanced</option>
+          <option value="28">28 — smaller file</option>
+          <option value="32">32 — lowest quality</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="progress-area" style="display:none;" class="progress-area">
+    <div class="progress-label"><span id="progress-label-text">Processing...</span><span id="progress-pct">0%</span></div>
+    <div class="progress-bar-bg"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+    <div class="log-box" id="log-box"></div>
+  </div>
+
+  <div id="error-area"></div>
+  <div id="result-area"></div>
+
+  <button class="convert-btn primary" id="convert-btn" style="display:none;" onclick="startConvert()">Convert to MP4</button>
+</div>
+
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.js"></script>
+<script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
+<script>
+const { FFmpeg } = FFmpegWASM;
+const { fetchFile } = FFmpegUtil;
+const ffmpeg = new FFmpeg();
+let inputFile = null;
+let inputName = 'video.mkv';
+let ffmpegReady = false;
+
+async function loadFFmpeg() {
+  try {
+    ffmpeg.on('log', ({ message }) => {
+      const lb = document.getElementById('log-box');
+      if (lb) { lb.textContent += message + '\n'; lb.scrollTop = lb.scrollHeight; }
+      parseProgress(message);
+    });
+    await ffmpeg.load({
+      coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+    });
+    ffmpegReady = true;
+    const s = document.getElementById('ffmpeg-status');
+    s.className = 'status-chip chip-ready';
+    s.innerHTML = '<span style="font-size:11px;">&#10003;</span> Ready';
+  } catch(e) {
+    const s = document.getElementById('ffmpeg-status');
+    s.className = 'status-chip chip-error';
+    s.textContent = 'Failed to load';
+    showError('FFmpeg failed to load: ' + e.message + '. Try refreshing the page.');
+  }
+}
+
+let duration = 0;
+function parseProgress(msg) {
+  const dm = msg.match(/Duration:\s*(\d+):(\d+):(\d+)/);
+  if (dm) { duration = parseInt(dm[1])*3600 + parseInt(dm[2])*60 + parseFloat(dm[3]); }
+  const tm = msg.match(/time=(\d+):(\d+):(\d+)/);
+  if (tm && duration > 0) {
+    const t = parseInt(tm[1])*3600 + parseInt(tm[2])*60 + parseFloat(tm[3]);
+    const pct = Math.min(Math.round((t/duration)*100), 99);
+    document.getElementById('progress-bar').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+}
+
+function switchTab(t) {
+  document.getElementById('tab-file').style.display = t === 'file' ? '' : 'none';
+  document.getElementById('tab-url').style.display = t === 'url' ? '' : 'none';
+  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', (i===0 && t==='file') || (i===1 && t==='url')));
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/(1024*1024)).toFixed(1) + ' MB';
+}
+
+function setFile(file, name) {
+  inputFile = file;
+  inputName = name || file.name;
+  const area = document.getElementById('file-card-area');
+  const isBlob = file instanceof Blob && !(file instanceof File);
+  const sizeTxt = isBlob ? formatSize(file.size) : formatSize(file.size);
+  area.innerHTML = `<div class="file-card">
+    <div class="file-icon">MKV</div>
+    <div>
+      <div class="file-name">${inputName}</div>
+      <div class="file-size">${sizeTxt}</div>
+    </div>
+    <button class="file-remove" onclick="clearFile()" title="Remove">&#215;</button>
+  </div>`;
+  document.getElementById('options-area').style.display = '';
+  document.getElementById('convert-btn').style.display = '';
+  document.getElementById('result-area').innerHTML = '';
+  document.getElementById('error-area').innerHTML = '';
+}
+
+function clearFile() {
+  inputFile = null;
+  document.getElementById('file-card-area').innerHTML = '';
+  document.getElementById('options-area').style.display = 'none';
+  document.getElementById('convert-btn').style.display = 'none';
+  document.getElementById('fileinput').value = '';
+}
+
+document.getElementById('fileinput').addEventListener('change', e => {
+  if (e.target.files[0]) setFile(e.target.files[0]);
+});
+
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag');
+  if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+});
+
+async function fetchFromUrl() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) return showError('Please enter a URL.');
+  document.getElementById('error-area').innerHTML = '';
+  const name = url.split('/').pop().split('?')[0] || 'video.mkv';
+  showError(''); 
+  const pArea = document.getElementById('progress-area');
+  pArea.style.display = '';
+  document.getElementById('progress-label-text').textContent = 'Downloading from URL...';
+  document.getElementById('progress-bar').style.width = '30%';
+  document.getElementById('progress-pct').textContent = '';
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const blob = await resp.blob();
+    pArea.style.display = 'none';
+    setFile(blob, name);
+  } catch(e) {
+    pArea.style.display = 'none';
+    showError('Could not fetch URL: ' + e.message + '. The server may not allow cross-origin requests.');
+  }
+}
+
+async function startConvert() {
+  if (!ffmpegReady) return showError('FFmpeg is still loading. Please wait.');
+  if (!inputFile) return showError('No file selected.');
+
+  document.getElementById('convert-btn').disabled = true;
+  document.getElementById('result-area').innerHTML = '';
+  document.getElementById('error-area').innerHTML = '';
+  const pArea = document.getElementById('progress-area');
+  pArea.style.display = '';
+  document.getElementById('progress-label-text').textContent = 'Converting...';
+  document.getElementById('progress-bar').style.width = '0%';
+  document.getElementById('log-box').textContent = '';
+  duration = 0;
+
+  const vcodec = document.getElementById('vcodec').value;
+  const acodec = document.getElementById('acodec').value;
+  const crf = document.getElementById('crf').value;
+
+  try {
+    const data = await fetchFile(inputFile);
+    await ffmpeg.writeFile('input.mkv', data);
+
+    const args = ['-i', 'input.mkv'];
+    args.push('-vcodec', vcodec);
+    if (vcodec !== 'copy') args.push('-crf', crf);
+    args.push('-acodec', acodec);
+    if (acodec === 'aac') args.push('-b:a', '192k');
+    args.push('-movflags', '+faststart', 'output.mp4');
+
+    const t0 = Date.now();
+    await ffmpeg.exec(args);
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+
+    const out = await ffmpeg.readFile('output.mp4');
+    document.getElementById('progress-bar').style.width = '100%';
+    document.getElementById('progress-pct').textContent = '100%';
+
+    const outBlob = new Blob([out.buffer], { type: 'video/mp4' });
+    const dlUrl = URL.createObjectURL(outBlob);
+    const outName = inputName.replace(/\.mkv$/i, '') + '.mp4';
+
+    document.getElementById('result-area').innerHTML = `<div class="result-card">
+      <div class="result-title">Conversion complete</div>
+      <div class="result-meta">
+        <div class="meta-item"><span class="meta-key">Output size: </span><span class="meta-val">${formatSize(outBlob.size)}</span></div>
+        <div class="meta-item"><span class="meta-key">Time: </span><span class="meta-val">${elapsed}s</span></div>
+        <div class="meta-item"><span class="meta-key">File: </span><span class="meta-val">${outName}</span></div>
+      </div>
+      <a href="${dlUrl}" download="${outName}" class="dl-btn">Download MP4</a>
+    </div>`;
+  } catch(e) {
+    showError('Conversion failed: ' + e.message);
+  } finally {
+    document.getElementById('convert-btn').disabled = false;
+    document.getElementById('progress-label-text').textContent = 'Done';
+  }
+}
+
+function showError(msg) {
+  document.getElementById('error-area').innerHTML = msg ? `<div class="error-box">${msg}</div>` : '';
+}
+
+loadFFmpeg();
+</script>
