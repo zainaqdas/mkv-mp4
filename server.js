@@ -1,15 +1,24 @@
 import express from "express";
 import cors from "cors";
 import { spawn } from "child_process";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 app.use(cors());
 
 const PORT = process.env.PORT || 3000;
 
-// Health check
+// Fix __dirname (needed for ES modules)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ✅ Serve frontend folder
+app.use(express.static(path.join(__dirname, "frontend")));
+
+// ✅ When opening root → show index.html
 app.get("/", (req, res) => {
-  res.send("MKV Streaming Server Running");
+  res.sendFile(path.join(__dirname, "frontend", "index.html"));
 });
 
 // 🎬 STREAM ENDPOINT
